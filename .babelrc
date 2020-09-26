@@ -1,0 +1,16 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "current"
+        }
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": ["react-hot-loader/babel"]
+}
+
+// 1) we need Babel to transpile the latest JS SYNTAX

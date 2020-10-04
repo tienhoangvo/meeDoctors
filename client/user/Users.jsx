@@ -45,9 +45,7 @@ const Users = () => {
     list(source.token, setUsers, setLoading, setError)
 
     return function cleanup() {
-      console.log('canceled feeding users!')
       source.cancel('Operation cancled by the user')
-      console.log(source)
     }
   }, [])
 

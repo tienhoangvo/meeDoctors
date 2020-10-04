@@ -7,6 +7,7 @@ export default ({ markup, css, user }) => {
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width, shrink-to-fit=no"
           >
+          <link rel="icon" href="/98b8e95c4d4ffc223eb2f54682f028b3.jpg" type="image/jpeg" sizes="16x16">
           <title>MERN Skeleton</title>
           <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400">
           <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">

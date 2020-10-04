@@ -16,7 +16,6 @@ const logout = catchPromises((req, res, next) => {
 })
 
 const login = async (req, res, next) => {
-  console.log('from login', req.body)
   const user = await User.findOne({
     email: req.body.email,
   })
@@ -35,7 +34,6 @@ const login = async (req, res, next) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     }
   )
-  console.log(process.env.JWT_COOKIE_EXPIRES_IN)
   res.cookie('jwt', token, {
     httpOnly: true,
     maxAge:
@@ -55,7 +53,6 @@ const login = async (req, res, next) => {
 
 const isLoggedIn = catchPromises(
   async (req, res, next) => {
-    console.log(req.headers)
     let token
     if (
       req.headers.authorization &&
@@ -87,7 +84,6 @@ const isLoggedIn = catchPromises(
 
 const authenticate = catchPromises(
   async (req, res, next) => {
-    console.log(req.headers)
     let token
     if (
       req.headers.authorization &&

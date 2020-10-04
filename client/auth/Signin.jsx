@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core'
 
 import { Error } from '@material-ui/icons'
+import { useCurrentUser } from '../contexts/currentUser'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -64,11 +65,16 @@ const useStyles = makeStyles((theme) => ({
 
 const Signin = ({ location }) => {
   const classes = useStyles()
-  const [currentUser, setCurrentUser] = useState()
+  const [sessionUser, setSessionUser] = useState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const {
+    currentUser,
+    setCurrentUser,
+  } = useCurrentUser()
 
   const onSubmit = (event) => {
     console.log(event)
@@ -76,7 +82,7 @@ const Signin = ({ location }) => {
     signin(
       email,
       password,
-      setCurrentUser,
+      setSessionUser,
       setLoading,
       setError
     )
@@ -85,10 +91,12 @@ const Signin = ({ location }) => {
     from: { pathname: '/' },
   }
 
-  if (currentUser) {
-    console.log(currentUser)
+  if (sessionUser) {
+    console.log('SessionUser', sessionUser)
+    setCurrentUser(sessionUser.user)
+    console.log('currentUser', currentUser)
     // return <Redirect to="/users" />
-    return authenticate(currentUser, () => (
+    return authenticate(sessionUser, () => (
       <Redirect to={from} />
     ))
   }

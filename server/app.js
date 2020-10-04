@@ -34,17 +34,28 @@ app.use(compression())
 
 app.use(cors())
 app.options('*', cors())
-// app.use(helmet.contentSecurityPolicy())
-// app.use(helmet.dnsPrefetchControl())
-// app.use(helmet.expectCt())
-// app.use(helmet.frameguard())
-// app.use(helmet.hidePoweredBy())
-// app.use(helmet.hsts())
-// app.use(helmet.ieNoOpen())
-// app.use(helmet.noSniff())
-// app.use(helmet.permittedCrossDomainPolicies())
-// app.use(helmet.referrerPolicy())
-// app.use(helmet.xssFilter())
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-eval'"],
+      scriptSrcAttr: ['none'],
+      objectSrc: ["'none'"],
+      styleSrc: ["'self'", "https: 'unsafe-inline'"],
+      fontSrc: ["'self'", "https: 'unsafe-inline'"],
+    },
+  })
+)
+app.use(helmet.dnsPrefetchControl())
+app.use(helmet.expectCt())
+app.use(helmet.frameguard())
+app.use(helmet.hidePoweredBy())
+app.use(helmet.hsts())
+app.use(helmet.ieNoOpen())
+app.use(helmet.noSniff())
+app.use(helmet.permittedCrossDomainPolicies())
+app.use(helmet.referrerPolicy())
+app.use(helmet.xssFilter())
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'))
@@ -64,7 +75,6 @@ app.use('/api/auth', authRouter)
 // })
 
 app.get('*', isLoggedIn, (req, res) => {
-  console.log(`FROM GET ${req.url}`)
   const sheets = new ServerStyleSheets()
   const context = {}
 
@@ -81,7 +91,6 @@ app.get('*', isLoggedIn, (req, res) => {
     )
   )
 
-  console.log('ssssssssssssssss', markup)
   if (context.url) {
     return res.redirect(303, context.url)
   }
@@ -90,7 +99,6 @@ app.get('*', isLoggedIn, (req, res) => {
     Template({
       markup: markup,
       css: css,
-      user: req.user,
     })
   )
 })

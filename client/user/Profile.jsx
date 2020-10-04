@@ -24,6 +24,7 @@ import { read } from './apiUser'
 import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import DeleteUser from './DeleteUser'
+import { useCurrentUser } from '../contexts/currentUser'
 
 const Profile = ({ match, history }) => {
   const [
@@ -34,9 +35,8 @@ const Profile = ({ match, history }) => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState()
 
+  const { currentUser } = useCurrentUser()
   useEffect(() => {
-    console.log('MATCH', match)
-
     const source = CancelToken.source()
     read(
       source.token,
@@ -49,24 +49,13 @@ const Profile = ({ match, history }) => {
     return function cleanup() {
       source.cancel('Cancel profile request')
     }
-  }, [])
+  }, [history.location.pathname])
 
   if (redirectToSignin)
     return <Redirect to="/signin" />
 
   if (error) {
     setRedirectToSignin(true)
-  }
-
-  if (user) {
-    console.log('CLICKED USER HERE', user)
-  }
-
-  if (isAuthenticated()) {
-    console.log(
-      'LOGGED IN USER HERE',
-      isAuthenticated()
-    )
   }
 
   return (
@@ -86,9 +75,8 @@ const Profile = ({ match, history }) => {
                 primary={user.name}
                 secondary={user.email}
               />
-              {isAuthenticated() &&
-                isAuthenticated().user._id ===
-                  user._id && (
+              {currentUser &&
+                currentUser._id === user._id && (
                   <ListItemSecondaryAction
                     style={{
                       display: 'flex',

@@ -14,13 +14,10 @@ const create = async (
       data: user,
     })
 
-    console.log(user)
-
     setNewUser(res.data.user)
     setLoading(false)
   } catch (err) {
     setLoading(false)
-    console.log(err.response)
     setError(err.response)
   }
 }
@@ -38,14 +35,12 @@ const list = async (
       method: 'GET',
       cancelToken,
     })
-    console.log(res.data.users)
     setLoading(false)
     setUsers(res.data.users)
   } catch (err) {
     setLoading(false)
     if (err instanceof Axios.Cancel) {
     } else {
-      console.log('FROM LIST', err)
       setError(err.response)
     }
   }
@@ -66,12 +61,9 @@ const read = async (
       cancelToken,
     })
 
-    console.log('res', res)
-
     setUser(res.data.user)
     setLoading(false)
   } catch (err) {
-    console.log(err)
     setError(err.response)
   }
 }
@@ -111,7 +103,6 @@ const remove = async (
       url: `/api/users/${userId}`,
       method: 'DELETE',
     })
-    console.log('From delete', res)
     setStatus(true)
     setLoading(false)
   } catch (err) {

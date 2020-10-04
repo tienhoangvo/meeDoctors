@@ -1,21 +1,71 @@
 import { Schema, model } from 'mongoose'
+import { isEmail, isMobilePhone } from 'validator'
 import bcrypt from 'bcryptjs'
 
 const userSchema = new Schema({
-  name: {
+  fullName: {
     type: String,
-    trim: true,
-    required: [true, 'Please provide your name!'],
+  },
+  firstName: {
+    type: String,
+    required: [true, 'Please provide your first name'],
+    validate: {
+      validator: (value) =>
+        isEmpty(value, { ignore_whitespace: true }),
+      message:
+        'First Name cannot be either empty or contain only whitespaces!',
+    },
+  },
+  lastName: {
+    type: String,
+    required: [true, 'Please provide your first name'],
+    validate: {
+      validator: (value) =>
+        isEmpty(value, { ignore_whitespace: true }),
+      message:
+        'First Name cannot be either empty or contain only whitespaces!',
+    },
   },
   email: {
     type: String,
     trim: true,
     required: [true, 'Please provide your email!'],
     unique: true,
-    match: [
-      /.+\@.+\..+/,
-      'Please provide a valid email adresss!',
+    validate: {
+      validator: isEmail,
+      message: 'Your email provided is invalid!',
+    },
+  },
+  phone: {
+    type: String,
+    trim: true,
+    unique: true,
+    validate: {
+      validator: (value) => {
+        return isMobilePhone(value, 'vi-VN')
+      },
+      message: 'Please provide a phone',
+    },
+  },
+  sex: {
+    type: String,
+    trim: true,
+    enum: ['male', 'female', 'secrete'],
+    required: [true, 'Pleaase provide your email'],
+  },
+  city: {
+    type: String,
+    required: [
+      true,
+      'In which city you currently live ?',
     ],
+    lowercase: true,
+    validate: {
+      validator: (value) =>
+        isEmpty(value, { ignore_whitespace: true }),
+      message:
+        'Last Name cannot be either empty or contain only whitespaces!',
+    },
   },
   password: {
     type: String,
@@ -26,6 +76,52 @@ const userSchema = new Schema({
     ],
     required: [true, 'Please provide your password!'],
   },
+  passwordConfirm: {
+    type: String,
+    trim: true,
+    validate: {
+      validator: function (value) {
+        return this.password === value
+      },
+      message: 'Passwords are not the same!',
+    },
+  },
+  forgotPasswordToken: {
+    type: String,
+  },
+  role: {
+    type: String,
+    enum: ['customer', 'administator', 'doctor'],
+    default: 'customer',
+  },
+  verfiedEmail: {
+    type: Boolean,
+    default: false,
+  },
+  verifedPhone: {
+    type: Boolean,
+    default: false,
+  },
+  address: {
+    type: String,
+    trim: true,
+  },
+  qualifications: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Qualifications',
+  },
+  yearsOfExprence: {
+    type: Number,
+    validate: [
+      isInt,
+      'Years of experience must be a positive integer ranging from 1 to 40',
+    ],
+  },
+  specialties: {
+    type: [Schema.Types.ObjectId],
+    ref: 'Specialities',
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,

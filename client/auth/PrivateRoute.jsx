@@ -1,17 +1,16 @@
 import React, { Component } from 'react'
 import { Route, Redirect } from 'react-router-dom'
-import { isAuthenticated } from './authHelper'
-
+import { useCurrentUser } from './../contexts/currentUser'
 const PrivateRoute = ({
   component: Component,
   ...rest
 }) => {
-  console.log(Component)
+  const { currentUser } = useCurrentUser()
   return (
     <Route
       {...rest}
       render={(props) =>
-        isAuthenticated() ? (
+        currentUser ? (
           <Component {...props} />
         ) : (
           <Redirect

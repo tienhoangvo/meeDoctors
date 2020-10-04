@@ -13,12 +13,15 @@ import { Redirect } from 'react-router-dom'
 
 import { remove } from './apiUser'
 import { clearJWT } from '../auth/authHelper'
+import { useCurrentUser } from '../contexts/currentUser'
 
 const DeleteUser = ({ userId }) => {
   const [open, setOpen] = useState(false)
   const [redirect, setRedirect] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
+
+  const { setCurrentUser } = useCurrentUser()
 
   const clickButton = () => {
     setOpen(true)
@@ -36,6 +39,7 @@ const DeleteUser = ({ userId }) => {
   }
 
   if (redirect) {
+    setCurrentUser(null)
     return <Redirect to="/" />
   }
   return (

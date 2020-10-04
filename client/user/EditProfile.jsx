@@ -18,6 +18,7 @@ import {
   authenticate,
 } from '../auth/authHelper'
 import { update } from './apiUser'
+import { useCurrentUser } from '../contexts/currentUser'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -63,21 +64,18 @@ const useStyles = makeStyles((theme) => ({
 
 const EditProfile = ({ match }) => {
   const classes = useStyles()
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(isAuthenticated())
-  )
+  const {
+    currentUser,
+    setCurrentUser,
+  } = useCurrentUser()
   const [user, setUser] = useState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
 
-  const [email, setEmail] = useState(
-    currentUser.user.email
-  )
-  const [name, setName] = useState(
-    currentUser.user.name
-  )
+  const [email, setEmail] = useState(currentUser.email)
+  const [name, setName] = useState(currentUser.name)
   const [password, setPassword] = useState(
-    currentUser.user.password
+    currentUser.password
   )
 
   const onSubmit = (event) => {
@@ -91,10 +89,10 @@ const EditProfile = ({ match }) => {
   }
 
   if (user) {
-    console.log('updated', user)
+    setCurrentUser(user)
     return authenticate(
       { ...currentUser, user },
-      () => <Redirect to={`/users/${user._id}`} />
+      () => <Redirect to={`/user/${user._id}`} />
     )
   }
 

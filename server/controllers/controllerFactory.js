@@ -6,10 +6,8 @@ export const listAll = (Model) => {
     const documents = await Model.find()
     const resObj = { status: 'success' }
     resObj[Model.collection.collectionName] = documents
-    setTimeout(() => {
-      console.log('from get all', resObj)
-      res.status(200).json(resObj)
-    }, 3000)
+
+    res.status(200).json(resObj)
   })
 }
 
@@ -26,7 +24,6 @@ export const getOne = (Model) => {
       ''
     )
     resObj[responceDocumentName] = document
-    console.log(resObj)
     res.status(200).json(resObj)
   })
 }
@@ -43,7 +40,6 @@ export const createOne = (Model) => {
     )
     resObj[responceDocumentName] = document
 
-    console.log(resObj)
     res.status(201).json(resObj)
   })
 }
@@ -76,7 +72,6 @@ export const updateOne = (Model) => {
     )
     resObj[responceDocumentName] = document
 
-    console.log(resObj)
     res.status(200).json(resObj)
   })
 }

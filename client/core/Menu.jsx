@@ -15,6 +15,8 @@ import {
   clearJWT,
 } from '../auth/authHelper'
 
+import { useCurrentUser } from './../contexts/currentUser'
+
 const isActive = (history, path) => {
   return {
     color: `${
@@ -25,9 +27,12 @@ const isActive = (history, path) => {
   }
 }
 
-const Menu = withRouter(({ history, user }) => {
-  console.log('is authenticated', isAuthenticated())
-  console.log('test', user)
+const Menu = withRouter(({ history }) => {
+  const {
+    currentUser,
+    setCurrentUser,
+  } = useCurrentUser()
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -51,7 +56,7 @@ const Menu = withRouter(({ history, user }) => {
           </Button>
         </Link>
 
-        {!isAuthenticated() ? (
+        {!currentUser ? (
           <span id="getting-started-btns">
             <Link to="/signup">
               <Button
@@ -70,15 +75,11 @@ const Menu = withRouter(({ history, user }) => {
           </span>
         ) : (
           <span id="user-navigation-btns">
-            <Link
-              to={`/user/${
-                isAuthenticated().user._id
-              }`}
-            >
+            <Link to={`/user/${currentUser._id}`}>
               <Button
                 style={isActive(
                   history,
-                  `/user/${isAuthenticated().user._id}`
+                  `/user/${currentUser._id}`
                 )}
               >
                 My profile
@@ -88,7 +89,10 @@ const Menu = withRouter(({ history, user }) => {
             <Button
               style={isActive(history, '/logout')}
               onClick={() => {
-                clearJWT(() => history.push('/'))
+                clearJWT(() => {
+                  setCurrentUser(null)
+                  history.push('/')
+                })
               }}
             >
               Logout

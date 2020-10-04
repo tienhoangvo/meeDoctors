@@ -3,7 +3,7 @@ import Axios from 'axios'
 const signin = async (
   email,
   password,
-  setCurrentUser = (f) => f,
+  setSessionUser = (f) => f,
   setLoading = (f) => f,
   setError = (f) => f
 ) => {
@@ -15,14 +15,12 @@ const signin = async (
       data: { email, password },
     })
 
-    console.log('Log in token', res.data)
     setLoading(false)
     if (res.data) {
-      setCurrentUser(res.data)
+      setSessionUser(res.data)
     }
   } catch (err) {
     setLoading(false)
-    console.log(err.response)
     setError(err.response)
   }
 }

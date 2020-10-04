@@ -1,13 +1,11 @@
 import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import path from 'path'
-console.log()
 
 dotenv.config({
   path: path.join(process.cwd(), './config.env'),
 })
 const { NODE_ENV, PORT, DB_URI, DB_PWD } = process.env
-console.log({ NODE_ENV, PORT, DB_URI, DB_PWD })
 
 import app from './app'
 const port = PORT || 8000

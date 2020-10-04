@@ -46,6 +46,7 @@ const Home = () => {
       >
         Home Page
       </Typography>
+      {/* <img src={`${unicornBikeImg}`} /> */}
       <CardMedia
         className={classes.media}
         image={unicornBikeImg}

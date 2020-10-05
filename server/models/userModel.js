@@ -1,5 +1,9 @@
 import { Schema, model } from 'mongoose'
-import { isEmail, isMobilePhone } from 'validator'
+import {
+  isEmail,
+  isMobilePhone,
+  isInt,
+} from 'validator'
 import bcrypt from 'bcryptjs'
 
 const userSchema = new Schema({

@@ -1,7 +1,7 @@
 {
-  "name": "mern-skeleton",
+  "name": "meedoctors",
   "version": "1.0.0",
-  "description": "A simple MERN APP with CRUD fuctionalities",
+  "description": "An Online Consultation System with MERN stack, websocket, and webRTC",
   "main": "index.js",
   "author": "Tien Vo",
   "license": "MIT",
@@ -14,6 +14,7 @@
     "@hot-loader/react-dom": "^16.13.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "all": "^0.0.0",
     "axios": "^0.20.0",
     "bcryptjs": "^2.4.3",
     "compression": "^1.7.4",
@@ -45,5 +46,8 @@
     "webpack-dev-middleware": "^3.7.2",
     "webpack-hot-middleware": "^2.25.0",
     "webpack-node-externals": "^2.5.2"
+  },
+  "resolutions": {
+    "chokidar": "^3.4.0"
   }
 }

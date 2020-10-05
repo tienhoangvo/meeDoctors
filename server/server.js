@@ -5,7 +5,13 @@ import path from 'path'
 dotenv.config({
   path: path.join(process.cwd(), './config.env'),
 })
-const { NODE_ENV, PORT, DB_URI, DB_PWD } = process.env
+const {
+  PORT,
+  DB_URI,
+  DB_PASSWORD,
+  DB_USERNAME,
+  DB_NAME,
+} = process.env
 
 import app from './app'
 const port = PORT || 8000
@@ -18,7 +24,13 @@ const server = app.listen(port, (err) => {
   }
 })
 
-const URI = DB_URI.replace('<DB_PWD>', DB_PWD)
+const URI = DB_URI.replace(
+  '<DB_USERNAME>',
+  DB_USERNAME
+)
+  .replace('<DB_PASSWORD>', DB_PASSWORD)
+  .replace('<DB_NAME>', DB_NAME)
+
 mongoose.connect(
   URI,
   {
@@ -40,3 +52,16 @@ mongoose.connect(
     }
   }
 )
+
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(
+      reason,
+      'Unhandled Rejection at Promise',
+      p
+    )
+  })
+  .on('uncaughtException', (err) => {
+    console.error(err, 'Uncaught Exception thrown')
+    process.exit(1)
+  })

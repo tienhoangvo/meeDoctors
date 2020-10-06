@@ -4,6 +4,7 @@ import User from './../models/userModel'
 import catchPromises from './../utils/catchPromises'
 import AppError from '../utils/appError'
 
+// AUTHENTICATION
 const logout = catchPromises((req, res, next) => {
   res.cookie('jwt', 'loggedout', {
     httpOnly: true,
@@ -15,16 +16,68 @@ const logout = catchPromises((req, res, next) => {
   })
 })
 
-const login = async (req, res, next) => {
+const signup = catchPromises(
+  async (req, res, next) => {
+    const {
+      phone,
+      password,
+      passwordConfirm,
+      email,
+      firstName,
+      lastName,
+      city,
+      address,
+      sex,
+    } = req.body
+
+    const user = await User.create({
+      phone,
+      password,
+      passwordConfirm,
+      email,
+      firstName,
+      lastName,
+      city,
+      address,
+      sex,
+    })
+
+    const token = jwt.sign(
+      { _id: user._id },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: process.env.JWT_EXPIRES_IN,
+      }
+    )
+
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      maxAge:
+        process.env.JWT_COOKIE_EXPIRES_IN *
+        24 *
+        60 *
+        60 *
+        1000,
+    })
+
+    res.status(201).json({
+      status: 'success',
+      token,
+      user,
+    })
+  }
+)
+
+const login = catchPromises(async (req, res, next) => {
   const user = await User.findOne({
-    email: req.body.email,
+    phone: req.body.phone,
   })
   if (
     !user ||
     !(await user.comparePasswords(req.body.password))
   )
     return next(
-      new AppError('Invalid email or password', 403)
+      new AppError('Invalid phone or password', 403)
     )
 
   const token = jwt.sign(
@@ -49,7 +102,7 @@ const login = async (req, res, next) => {
     token,
     user,
   })
-}
+})
 
 const isLoggedIn = catchPromises(
   async (req, res, next) => {
@@ -107,6 +160,8 @@ const authenticate = catchPromises(
       }
     )
 
+    console.log('FROM AUTHENTICATE', decoded)
+
     const user = await User.findById(decoded._id)
 
     if (!user) {
@@ -117,10 +172,63 @@ const authenticate = catchPromises(
         )
       )
     }
-
+    console.log(user)
     req.user = user
     next()
   }
 )
 
-export { logout, login, authenticate, isLoggedIn }
+// AUTHORIZATION
+const restrictTo = (...roles) => {
+  return (req, res, next) => {
+    const user = { req }
+    if (!roles.includes(user.role)) {
+      return next(
+        new AppError(
+          `You do not have persmission to access this URL: ${req.orignalURL}.`,
+          403
+        )
+      )
+    }
+
+    next()
+  }
+}
+
+// VERIFICATION STEPS
+
+const isVerified = (req, res, next) => {
+  // Retrieve current user
+  const { user } = req
+
+  //01 -- Check if he/she has verified his/her current phone or not
+  if (!user.verifiedPhone) {
+    return next(
+      new AppError(
+        `You have not verified this phone number: ${user.phone}`,
+        401
+      )
+    )
+  }
+
+  //02 -- Check if he/she has verified his/her current email or not
+  if (!user.verifiedEmail) {
+    return next(
+      new AppError(
+        `You have not verified this email address: ${user.email}`,
+        401
+      )
+    )
+  }
+
+  next()
+}
+
+export {
+  logout,
+  login,
+  signup,
+  restrictTo,
+  authenticate,
+  isLoggedIn,
+}

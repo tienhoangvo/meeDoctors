@@ -1,4 +1,0 @@
-speciatlies[]
-qualificatios []
-timeslots []
-timeslots []

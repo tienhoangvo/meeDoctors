@@ -20,6 +20,7 @@ import globalErrorHandler from './controllers/errorHandler'
 import devBundle from './devBundle'
 import userRouter from './routes/userRoutes'
 import authRouter from './routes/authRoutes'
+import timeSlotRouter from './routes/timeSlotRoutes'
 import { isLoggedIn } from './controllers/authController'
 
 const app = express()
@@ -67,8 +68,10 @@ app.use(
     path.join(CURRENT_WORKING_DIR, 'dist')
   )
 )
-app.use('/api/users', userRouter)
-app.use('/api/auth', authRouter)
+
+app.use('/api/v1/users', userRouter)
+app.use('/api/v1/auth', authRouter)
+app.use('/api/v1/timeSlots', timeSlotRouter)
 
 // app.get('/', (req, res) => {
 //   res.status(200).send(Template())

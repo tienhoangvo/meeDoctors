@@ -1,7 +1,7 @@
 import Axios from 'axios'
 
 const signin = async (
-  email,
+  phone,
   password,
   setSessionUser = (f) => f,
   setLoading = (f) => f,
@@ -11,8 +11,8 @@ const signin = async (
     setLoading(true)
     const res = await Axios({
       method: 'POST',
-      url: '/api/auth/login',
-      data: { email, password },
+      url: '/api/v1/auth/login',
+      data: { phone, password },
     })
 
     setLoading(false)

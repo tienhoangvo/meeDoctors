@@ -1,19 +1,17 @@
-import dotenv from 'dotenv'
+import credentials from './credentials'
 import mongoose from 'mongoose'
-import path from 'path'
 
-dotenv.config({
-  path: path.join(process.cwd(), './config.env'),
-})
 const {
   PORT,
   DB_URI,
   DB_PASSWORD,
   DB_USERNAME,
   DB_NAME,
+  DB_LOCAL_URI,
 } = process.env
 
 import app from './app'
+// console.log('FROM SERVER', process.env)
 const port = PORT || 8000
 
 const server = app.listen(port, (err) => {
@@ -31,6 +29,7 @@ const URI = DB_URI.replace(
   .replace('<DB_PASSWORD>', DB_PASSWORD)
   .replace('<DB_NAME>', DB_NAME)
 
+// const URI = process.env.DB_LOCAL_URI
 mongoose.connect(
   URI,
   {

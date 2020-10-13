@@ -6,6 +6,7 @@ const PrivateRoute = ({
   ...rest
 }) => {
   const { currentUser } = useCurrentUser()
+  console.log('current', currentUser)
   return (
     <Route
       {...rest}

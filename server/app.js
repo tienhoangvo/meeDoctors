@@ -35,18 +35,18 @@ app.use(compression())
 
 app.use(cors())
 app.options('*', cors())
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-eval'"],
-      scriptSrcAttr: ['none'],
-      objectSrc: ["'none'"],
-      styleSrc: ["'self'", "https: 'unsafe-inline'"],
-      fontSrc: ["'self'", "https: 'unsafe-inline'"],
-    },
-  })
-)
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       defaultSrc: ["'self'"],
+//       scriptSrc: ["'self'", "'unsafe-eval'"],
+//       scriptSrcAttr: ['none'],
+//       objectSrc: ["'none'"],
+//       styleSrc: ["'self'", "https: 'unsafe-inline'"],
+//       fontSrc: ["'self'", "https: 'unsafe-inline'"],
+//     },
+//   })
+// )
 app.use(helmet.dnsPrefetchControl())
 app.use(helmet.expectCt())
 app.use(helmet.frameguard())

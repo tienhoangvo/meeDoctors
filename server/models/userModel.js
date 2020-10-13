@@ -6,6 +6,7 @@ import {
 } from 'validator'
 
 import bcrypt from 'bcryptjs'
+import crypto from 'crypto'
 
 const userSchema = new Schema(
   {
@@ -52,11 +53,12 @@ const userSchema = new Schema(
       unique: true,
       validate: {
         validator: (value) => {
-          return isMobilePhone(value, 'vi-VN')
+          return isMobilePhone(value)
         },
         message: 'Please provide a phone',
       },
     },
+    avatar: String,
     sex: {
       type: String,
       trim: true,
@@ -90,30 +92,31 @@ const userSchema = new Schema(
         true,
         'Please provide your password!',
       ],
+      select: false,
     },
     passwordConfirm: {
       type: String,
       trim: true,
       validate: {
         validator: function (value) {
-          return this.password === value
+          if (this) return this.password === value
         },
         message: 'Passwords are not the same!',
       },
     },
-    forgotPasswordToken: {
-      type: String,
-    },
+    passwordChangedAt: Date,
+    hashedResetPasswordToken: String,
+    resetPasswordTokenExpiresAt: Date,
     role: {
       type: String,
       enum: ['customer', 'administator', 'doctor'],
       default: 'customer',
     },
-    verfiedEmail: {
+    verifiedEmail: {
       type: Boolean,
       default: false,
     },
-    verifedPhone: {
+    verifiedPhone: {
       type: Boolean,
       default: false,
     },
@@ -141,6 +144,17 @@ const userSchema = new Schema(
   }
 )
 
+///////////////////////////
+// VIRTUALS ATTRIBUTES
+///////////////////////////
+userSchema.virtual('fullName').get(function () {
+  // Generating fullName after retrieve the user from the database.
+  return `${this.firstName} ${this.lastName}`
+})
+
+///////////////////////////
+// DOCUMENT MIDDLEWARES
+///////////////////////////
 userSchema.pre('save', async function (next) {
   // I) Generate fullName
   this.fullName = this.firstName + ' ' + this.lastName
@@ -151,15 +165,19 @@ userSchema.pre('save', async function (next) {
 
   // II.2) Hash the password if it was provided
   this.password = await bcrypt.hash(this.password, 12)
+  this.passwordChangedAt = new Date()
 
   // II.3) Delete the passwordConfirm field
   this.passwordConfirm = undefined
   next()
 })
 
+///////////////////////////
+// QUERY MIDDLEWARES
+///////////////////////////
 userSchema.pre(/find/, function (next) {
   // Prevent responsing the password attribute and unnessary attributes
-  this.select('-password -__v')
+  this.select('-__v')
   next()
 })
 
@@ -176,24 +194,58 @@ userSchema.pre('findOneAndUpdate', async function (
   next()
 })
 
-userSchema.virtual('fullName').get(function () {
-  // Generating fullName after retrieve the user from the database.
-  return `${this.firstName} ${this.lastName}`
-})
-
+///////////////////////////
+// INSTANCE METHODS
+///////////////////////////
 userSchema.methods.comparePasswords = async function (
   candidatePassword
 ) {
+  console.log(this)
   return await bcrypt.compare(
     candidatePassword,
     this.password
   )
 }
 
-// Create index text search
+userSchema.methods.changedPasswordAfter = function (
+  initialJWTTimestamp
+) {
+  if (this.changedPasswordAt) {
+    const changedPasswordTimestamp = parseInt(
+      this.changedPasswordAt.getTime() / 1000,
+      10
+    )
+
+    return (
+      changedPasswordTimestamp > initialJWTTimestamp
+    )
+  }
+  return false
+}
+
+userSchema.methods.createResetPasswordToken = async function () {
+  const resetPasswordToken = crypto
+    .randomBytes(4)
+    .toString('hex')
+
+  this.hashedResetPasswordToken = crypto
+    .createHash('sha256')
+    .update(resetPasswordToken)
+    .digest('hex')
+
+  this.resetPasswordTokenExpiresAt =
+    Date.now() + 1 * 60 * 1000 // expires after 3 minutes since the reset token initialized
+  await this.save()
+  return resetPasswordToken
+}
+
+///////////////////////////
+// INDEXS
+///////////////////////////
 userSchema.index({
   fullName: 'text',
   phone: 'text',
   email: 'text',
 })
+
 export default model('User', userSchema)

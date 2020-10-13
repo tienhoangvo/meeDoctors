@@ -3,8 +3,8 @@ import { Route, Switch } from 'react-router-dom'
 import PrivateRoute from './auth/PrivateRoute'
 import Menu from './core/Menu'
 import Home from './core/Home'
-import Users from './user/Users'
-import Signup from './user/Signup'
+import Doctors from './user/Doctors'
+import Signup from './auth/Signup'
 import Signin from './auth/Signin'
 import Profile from './user/Profile'
 import EditProfile from './user/EditProfile'
@@ -13,13 +13,11 @@ import { CurrentUserProvider } from './contexts/currentUser'
 const MainRouter = ({ user }) => {
   return (
     <CurrentUserProvider serverUser={user}>
-      <div
-        style={{ padding: '40px 200px 200px 200px' }}
-      >
+      <>
         <Menu />
         <Switch>
           <Route exact path="/" component={Home} />
-          <Route path="/users" component={Users} />
+          <Route path="/doctors" component={Doctors} />
           <Route path="/signup" component={Signup} />
           <Route path="/signin" component={Signin} />
           <PrivateRoute
@@ -28,12 +26,11 @@ const MainRouter = ({ user }) => {
           />
 
           <Route
-            exact
             path="/user/:userId"
             component={Profile}
           />
         </Switch>
-      </div>
+      </>
     </CurrentUserProvider>
   )
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { authenticate } from './authHelper'
 import { signin } from './apiAuth'
-
 import {
   Card,
   CardContent,
@@ -16,6 +15,7 @@ import {
 
 import { Error } from '@material-ui/icons'
 import { useCurrentUser } from '../contexts/currentUser'
+import useInput from '../hooks/useInput'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -68,8 +68,8 @@ const Signin = ({ location }) => {
   const [sessionUser, setSessionUser] = useState()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [phoneProps, setPhone] = useInput('')
+  const [passwordProps, setPassword] = useInput('')
 
   const {
     currentUser,
@@ -78,10 +78,10 @@ const Signin = ({ location }) => {
 
   const onSubmit = (event) => {
     console.log(event)
-
+    console.log(phoneProps, passwordProps)
     signin(
-      email,
-      password,
+      phoneProps.value,
+      passwordProps.value,
       setSessionUser,
       setLoading,
       setError
@@ -106,13 +106,10 @@ const Signin = ({ location }) => {
       <CardContent>
         <Typography variant="h6">Sign In</Typography>
         <TextField
-          id="email"
-          type="email"
-          label="Email"
-          value={email}
-          onChange={(event) =>
-            setEmail(event.target.value)
-          }
+          id="phone"
+          type="phone"
+          label="Phone"
+          {...phoneProps}
           margin="normal"
           className={classes.textField}
         />
@@ -121,10 +118,7 @@ const Signin = ({ location }) => {
           id="password"
           type="password"
           label="Password"
-          value={password}
-          onChange={(event) =>
-            setPassword(event.target.value)
-          }
+          {...passwordProps}
           margin="normal"
           className={classes.textField}
         />

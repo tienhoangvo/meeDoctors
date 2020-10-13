@@ -25,91 +25,70 @@ import { Redirect } from 'react-router'
 import { Link } from 'react-router-dom'
 import DeleteUser from './DeleteUser'
 import { useCurrentUser } from '../contexts/currentUser'
+import Fetch from '../components/utils/Fetch'
 
 const Profile = ({ match, history }) => {
-  const [
-    redirectToSignin,
-    setRedirectToSignin,
-  ] = useState(false)
-  const [user, setUser] = useState()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState()
-
   const { currentUser } = useCurrentUser()
-  useEffect(() => {
-    const source = CancelToken.source()
-    read(
-      source.token,
-      match.params.userId,
-      setUser,
-      setLoading,
-      setError
-    )
-
-    return function cleanup() {
-      source.cancel('Cancel profile request')
-    }
-  }, [history.location.pathname])
-
-  if (redirectToSignin)
-    return <Redirect to="/signin" />
-
-  if (error) {
-    setRedirectToSignin(true)
-  }
-
+  console.log(match)
   return (
-    <>
-      {loading && <LinearProgress />}
-      {user && (
-        <Paper evelation={4}>
-          <Typography variant="h6">Profile</Typography>
-          <List dense>
-            <ListItem>
-              <ListItemAvatar>
-                <Avatar>
-                  <Person />
-                </Avatar>
-              </ListItemAvatar>
-              <ListItemText
-                primary={user.name}
-                secondary={user.email}
-              />
-              {currentUser &&
-                currentUser._id === user._id && (
-                  <ListItemSecondaryAction
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <Link
-                      to={`/user/edit/${user._id}`}
+    <Fetch
+      url={`/api/v1/users/${match.params.userId}`}
+      renderSuccess={({ data }) => {
+        console.log('FROM MY PROFILE', data.data.user)
+        return (
+          <Paper evelation={4}>
+            <Typography variant="h6">
+              Profile
+            </Typography>
+            <List dense>
+              <ListItem>
+                <ListItemAvatar>
+                  <Avatar>
+                    <Person />
+                  </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                  primary={data.data.user.fullName}
+                  secondary={data.data.user.email}
+                />
+                {currentUser &&
+                  currentUser._id ===
+                    data.data.user._id && (
+                    <ListItemSecondaryAction
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                      }}
                     >
-                      <Edit color="primary" />
-                    </Link>
-                    <DeleteUser
-                      userId={user._id}
-                      history={history}
-                    />
-                  </ListItemSecondaryAction>
-                )}
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText
-                primary={
-                  'Joined: ' +
-                  new Date(
-                    user.createdAt
-                  ).toDateString()
-                }
-              />
-            </ListItem>
-          </List>
-        </Paper>
-      )}
-    </>
+                      <Link
+                        to={`/user/edit/${data.data.user._id}`}
+                      >
+                        <Edit color="primary" />
+                      </Link>
+                      <DeleteUser
+                        userId={data.data.user._id}
+                        history={history}
+                      />
+                    </ListItemSecondaryAction>
+                  )}
+              </ListItem>
+              <Divider />
+              <ListItem>
+                <ListItemText
+                  primary={
+                    'Joined: ' +
+                    new Date(
+                      data.data.user.createdAt
+                    ).toDateString()
+                  }
+                />
+              </ListItem>
+            </List>
+          </Paper>
+        )
+      }}
+      renderError={() => <Redirect to="/signin" />}
+    />
   )
 }
 export default Profile

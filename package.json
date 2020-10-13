@@ -14,6 +14,7 @@
     "@hot-loader/react-dom": "^16.13.0",
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
+    "@material-ui/lab": "^4.0.0-alpha.56",
     "all": "^0.0.0",
     "axios": "^0.20.0",
     "bcryptjs": "^2.4.3",
@@ -24,11 +25,13 @@
     "helmet": "^4.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.2",
+    "nodemailer": "^6.4.13",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hot-loader": "^4.12.21",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "twilio": "^3.49.4",
     "validator": "^13.1.17"
   },
   "devDependencies": {

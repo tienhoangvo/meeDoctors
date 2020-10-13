@@ -7,7 +7,7 @@ import {
   Typography,
 } from '@material-ui/core'
 
-import unicornBikeImg from './../assets/images/unicorn-bike.jpg'
+import remoteMedicalCareJpg from './../assets/images/sarah-kilian-GhtVhowMQvo-unsplash.jpg'
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -46,10 +46,10 @@ const Home = () => {
       >
         Home Page
       </Typography>
-      {/* <img src={`${unicornBikeImg}`} /> */}
+      {/* <img src={`${remoteMedicalCareJpg}`} /> */}
       <CardMedia
         className={classes.media}
-        image={unicornBikeImg}
+        image={remoteMedicalCareJpg}
         title="Unicorn Bicycle"
       />
       <Typography
@@ -60,17 +60,17 @@ const Home = () => {
       >
         Photo by{' '}
         <a
-          href="https://unsplash.com/@boudewijn_huysmans"
+          href="https://unsplash.com/@rojekilian"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Boudewijn Huysmans
+          Sarah Kilian
         </a>{' '}
         on Unsplash
       </Typography>
       <CardContent>
         <Typography variant="body2" component="p">
-          Welcome to the MERN Skeleton home page.
+          Welcome to the meeDoctors home page.
         </Typography>
       </CardContent>
     </Card>
